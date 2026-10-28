@@ -5,8 +5,10 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 
-# usage: python3 pdfs.py <book.xlsx> <as-on dd.mm.yyyy> <close dd.mm.yyyy>
+# usage: python3 pdfs.py <book.xlsx> <as-on dd.mm.yyyy> <price date dd.mm.yyyy> [price label]
+# price label defaults to '<date> close'; for live prices pass e.g. 'live 28.10.2026 ~11:35 IST'
 BOOK, ASON, CLOSE = sys.argv[1], sys.argv[2], sys.argv[3]
+LABEL = sys.argv[4] if len(sys.argv) > 4 else f"{CLOSE} close"
 # Adeep's manual colour choice (same list as GREEN_NAMES in consolidate.py). Change only when he says so.
 GREEN_NAMES = {
     'AFCOM Holdings Ltd', 'Affle 3i Ltd', 'Avenue Supermarts (DMart) Ltd', 'Bajaj Finance Ltd',
@@ -74,9 +76,9 @@ for tab in TABS:
     t.setStyle(TableStyle(st))
     h = ParagraphStyle('h', fontName='Helvetica-Bold', fontSize=9, spaceAfter=8)
     sub = ParagraphStyle('s', fontName='Helvetica-Oblique', fontSize=6.5, spaceBefore=6, textColor=colors.grey)
-    foot = Paragraph(f"Market prices are NSE/BSE closes of {CLOSE} (Screener.in); ETFs, rights entitlements and holdings marked * "
+    foot = Paragraph(f"Market prices are NSE/BSE prices ({LABEL}, Screener.in); ETFs, rights entitlements and holdings marked * "
                      "use statement prices or carry no price. * No cost or price on the statement.", sub)
-    fn = f"Consolidated_Portfolio_Summary_{name.replace(' ', '_')}_{CLOSE}_close.pdf"
+    fn = f"Consolidated_Portfolio_Summary_{name.replace(' ', '_')}_{CLOSE}_{"live" if "live" in LABEL else "close"}.pdf"
     d = SimpleDocTemplate(fn, pagesize=landscape(A4), leftMargin=36, rightMargin=36, topMargin=22, bottomMargin=16)
-    d.build([Paragraph(f"CONSOLIDATED PORTFOLIO SUMMARY – {name.upper()} ({broker.upper()}) – as on {ASON} (priced at {CLOSE} close)", h), t, foot])
+    d.build([Paragraph(f"CONSOLIDATED PORTFOLIO SUMMARY – {name.upper()} ({broker.upper()}) – as on {ASON} (priced at {LABEL})", h), t, foot])
     print(fn, len(rows), round(tot_mv), round(tot_inv))

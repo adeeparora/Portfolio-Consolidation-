@@ -230,7 +230,7 @@ def build(state, out):
     title(ws, "COMMON PRICE SHEET",
           "One price per security, used to value every portfolio. Without an exchange close, the statement price is used, "
           "freshest statement first: " + " → ".join(p["basis_label"] for p in P) + ".")
-    ws["A3"] = (f"Column B holds NSE/BSE closes for {cdate} (Screener.in). TO UPDATE: overwrite the yellow column B and the "
+    ws["A3"] = (f"Column B holds NSE/BSE prices as at {cdate} (Screener.in). TO UPDATE: overwrite the yellow column B and the "
                 "source text beside it — every portfolio and the combined view revalue. Blank B = statement price.")
     ws["A3"].font = f(True, "C00000", 9)
     stc = {p["key"]: L(5 + i) for i, p in enumerate(P)}
@@ -362,7 +362,7 @@ def build(state, out):
     # ---------------- summary ----------------
     ws = ws_sum
     title(ws, "CONSOLIDATED PORTFOLIO SUMMARY – ALL MANAGED ACCOUNTS",
-          f"Built {state.get('built', '')} from {n} statements. All market values at NSE/BSE close of {cdate} (Prices sheet); "
+          f"Built {state.get('built', '')} from {n} statements. All market values at the Screener.in price of {cdate} (Prices sheet); "
           "statement-reported values kept alongside for reconciliation.")
     sh = ["Portfolio", "Broker", "Holdings as of", "Statement price basis", "# Holdings", "Invested (₹)", "Market Value (₹)",
           "Unrealised P&L (₹)", "P&L %", "Share of Combined MV",
@@ -427,7 +427,7 @@ def build(state, out):
             ws.cell(r, j).font = f(j == 2, GREEN if j > 1 else "000000")
 
     notes = ["NOTES & FLAGS",
-             f"• Pricing: every holding is valued at the NSE/BSE close of {cdate} (Screener.in daily price series), one price per "
+             f"• Pricing: every holding is valued at the Screener.in price of {cdate}, one price per "
              "security across all accounts.",
              f'="• Securities on an exchange close: "&COUNTIF(Prices!${SRC}$6:${SRC}${LAST},"Close*")&"   |   on a statement price: "'
              f'&COUNTIF(Prices!${SRC}$6:${SRC}${LAST},"No exchange*")&"   |   held in all {n} accounts: "&COUNTIF({sbs}!$E${FIRST}:$E${end},{n})']
