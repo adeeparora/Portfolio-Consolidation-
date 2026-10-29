@@ -390,7 +390,9 @@ def build(state, out):
     for c in "FGHKL":
         ws[f"{c}{cr}"] = f"=SUM({c}6:{c}{cr-1})"
     ws[f"M{cr}"] = f'=IF(K{cr}>0,L{cr}/K{cr},"")'
-    ws[f"I{cr}"], ws[f"J{cr}"] = f'=IF(F{cr}>0,H{cr}/F{cr},"")', f"=SUM(J6:J{cr-1})"
+    ws[f"J{cr}"] = f"=SUM(J6:J{cr-1})"
+    for c in "FHI":   # combined Total Invested / Gain-Loss totals intentionally not shown (base block is the yardstick)
+        ws[f"{c}{cr}"] = None
     for j in range(1, 14):
         c = ws.cell(cr, j)
         c.font, c.fill, c.border = f(True, "FFFFFF"), fill(COMB_DARK), BOX
