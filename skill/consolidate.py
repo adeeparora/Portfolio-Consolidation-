@@ -142,8 +142,7 @@ def build(state, out):
         ws[f"B{T}"] = "TOTAL"
         for c in "ABCDEFGHIJKL":
             ws[f"{c}{T}"].fill, ws[f"{c}{T}"].font, ws[f"{c}{T}"].border = fill(light[k]), f(True), Border(left=thin, right=thin, top=med, bottom=med)
-        ws[f"E{T}"], ws[f"H{T}"], ws[f"I{T}"] = f"=SUM(E{FIRST}:E{end})", f"=SUM(H{FIRST}:H{end})", f"=H{T}-E{T}"
-        ws[f"J{T}"], ws[f"K{T}"] = f'=IF(E{T}>0,I{T}/E{T},"")', f"=SUM(K{FIRST}:K{end})"
+        ws[f"H{T}"], ws[f"K{T}"] = f"=SUM(H{FIRST}:H{end})", f"=SUM(K{FIRST}:K{end})"   # no total shown for Invested (E) or P&L (I, J)
         for c, fmt in zip("EHIJK", [RS, RS, RS, PCT, PCT]):
             ws[f"{c}{T}"].number_format = fmt
         tot_row[p["key"]] = T
@@ -374,7 +373,7 @@ def build(state, out):
     for i, p in enumerate(P):
         r, t = 6 + i, q(p["tab"])
         vals = [p["name"], p["broker"], p["holdings_date"], p["price_basis"],
-                f'=COUNTIFS({t}!$D${FIRST}:$D${LAST},">0",{t}!$B${FIRST}:$B${LAST},"<>Cash*")', f"={t}!E{tot_row[p['key']]}", f"={t}!H{tot_row[p['key']]}",
+                f'=COUNTIFS({t}!$D${FIRST}:$D${LAST},">0",{t}!$B${FIRST}:$B${LAST},"<>Cash*")', f"=SUM({t}!E{FIRST}:E{tot_row[p['key']]-1})", f"={t}!H{tot_row[p['key']]}",
                 f"=G{r}-F{r}", f'=IF(F{r}>0,H{r}/F{r},"")', f'=IF($G${cr}=0,"",G{r}/$G${cr})']
         if p["key"] in base_rows:
             vals += [f"={t}!E{base_rows[p['key']][0]}", f"=G{r}-K{r}", f'=IF(K{r}>0,L{r}/K{r},"")']
